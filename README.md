@@ -18,14 +18,14 @@
 - **제한된 버퍼 및 Blocking:** 첫 번째 기계를 제외한 모든 후속 기계 $j \in \{2, 3, \dots, m\}$ 및 검사 기계 $k \in \mathcal{I}$ 앞에는 용량이 $C$로 제한된 대기 버퍼가 존재한다. 후속 기계의 버퍼가 가득 찬 경우, 선행 기계는 작업을 마쳤음에도 다음 단계로 배출하지 못하고 **Blocking** 상태가 된다.
 - **Window 제약 기반 Missing Operation:** 본 스케줄링 환경에서의 결측 공정(Missing operation)은 Inspection Machine에 한하여 발생한다. 검사 공정은 Window 제약 $W$를 위반하지 않는 선에서 제한적으로 생략(Bypass)될 수 있으며, 검사가 생략된 작업은 선행 기계에서 완료된 즉시 다음 기계의 버퍼로 직접 라우팅된다.
 - **동시 완료 시 라우팅 우선순위:** 특정 Stage에서 일반 기계(Main machine)와 검사 기계(Inspection machine)의 작업이 동시에 완료된 경우, 검사 기계에서 완료된 작업이 다음 기계로 넘어가는 라우팅 우선순위(Routing priority)를 갖는다.
-
----
+  
+<br><br>
 
 ## ⚙️ Core Environment Logic: `step()`
 
 환경의 상태 전이(State Transition)를 담당하는 `step()` 함수는 Event-Driven 방식으로 설계되었으며, 크게 **4가지 Phase**로 나뉘어 실행된다. 
 
----
+
 
 ### Phase 1. Action Processing & Buffer Sorting
 Agent로부터 전달받은 Action을 해석하여 각 Machine의 Buffer를 정렬한다.
