@@ -4,11 +4,11 @@
 
 ![NPFSP Environment Schematic](./assets/NPFSP_schematic.png)
 
----
+<br><br>
 
 ## Assumptions
 
-본 연구에서 다루는 Scheduling Environment는 **NPFSP(Non-Permutation Flowshop Scheduling Problem)**의 일반적인 가정¹²과 더불어, Limited Buffers 및 Window-based Inspection 제약에 따른 몇 가지 추가적인 가정을 전제로 한다.
+본 연구에서 다루는 Scheduling Environment는 **NPFSP(Non-Permutation Flowshop Scheduling Problem)** 의 일반적인 가정¹²과 더불어, Limited Buffers 및 Window-based Inspection 제약에 따른 몇 가지 추가적인 가정을 전제로 한다.
 
 > ¹ *Multi-heuristic desirability ant colony system heuristic for non-permutation flowshop scheduling problems (The International Journal of Advanced Manufacturing Technology, 2007)*
 > ² *Solving non-permutation flow-shop scheduling problem via a novel deep reinforcement learning approach (Computers & Operations Research, 2023)*
@@ -21,7 +21,7 @@
 - **Window 제약 기반 Missing Operation:** 본 스케줄링 환경에서의 결측 공정(Missing operation)은 Inspection Machine에 한하여 발생한다. 검사 공정은 Window 제약 $W$를 위반하지 않는 선에서 제한적으로 생략(Bypass)될 수 있으며, 검사가 생략된 작업은 선행 기계에서 완료된 즉시 다음 기계의 버퍼로 직접 라우팅된다.
 - **동시 완료 시 라우팅 우선순위:** 특정 Stage에서 일반 기계(Main machine)와 검사 기계(Inspection machine)의 작업이 동시에 완료된 경우, 검사 기계에서 완료된 작업이 다음 기계로 넘어가는 라우팅 우선순위(Routing priority)를 갖는다.
 
----
+<br><br>
 
 ## Environment Overview
 
