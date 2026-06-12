@@ -120,8 +120,7 @@ torch==2.12.0
 저장소를 클론한 뒤, 필수 의존성 패키지를 설치합니다
 ```text
 # 1. 레포지토리 클론
-git clone [https://github.com/](https://github.com/)[YOUR-USERNAME]/npfsp-mo-lb-env.git
-cd npfsp-mo-lb-env
+git clone https://github.com/sanghunii/npfsp-missing-ops-env.git
 
 # 2. 필수 패키지 설치
 pip install -r requirements.txt
