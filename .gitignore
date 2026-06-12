@@ -1,0 +1,11 @@
+# environment variables
+.env
+
+# python virtual environment
+.venv
+
+**/__pycache__/*
+**/tempCodeRunnerFile.py
+
+# metadata in macOS
+.DS_Store
