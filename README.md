@@ -1,7 +1,7 @@
 ## Schematic
 
 아래는 본 연구의 NPFSP 환경의 schematic이다.
-![NPFSP Environment Schematic](./assets/env_schematic.png)
+![NPFSP Environment Schematic](./assets/NPFSP_schematic.png)
 
 
 ## Assumptions
@@ -21,7 +21,20 @@
   
 <br><br>
 
-## ⚙️ Core Environment Logic: `step()`
+## Environment Overview
+
+본 연구의 NPFSP 강화학습 시뮬레이터는 `Process` 클래스로 구현되어 있으며, 파이썬 기반으로 환경의 초기화, 상태/행동 공간(State/Action Space) 정의, 그리고 에피소드 진행을 관리한다.
+
+### ⚙️ Initialization Arguments
+환경(Environment) 객체 생성 시 다음과 같은 주요 파라미터를 입력받아 동적으로 스케줄링 환경을 구성한다.
+
+* **`num_machines` (int):** 공정 내 기계(Machine)의 총 개수 ($m$).
+* **`process_range` (List[Tuple[int, int]]):** 각 기계별 가공 시간(Processing time)의 범위를 지정하는 리스트. 각 기계마다 `(최소 시간, 최대 시간)` 형태의 튜플로 주어진다.
+* **`episode_len_list` (List[int]):** 한 에피소드(Batch)에서 처리할 전체 작업(Job) 수의 후보군. (예: `[15, 30, 50, 75, 100]`)
+* **`buffer_limit` (int):** 두 번째 기계부터 마지막 기계 사이, 그리고 검사대(Inspection machine) 앞의 대기 버퍼 최대 용량 ($C$). (첫 번째 기계의 버퍼는 무한대로 동작한다.)
+
+
+### ⚙️ Core Environment Logic: `step()`
 
 환경의 상태 전이(State Transition)를 담당하는 `step()` 함수는 Event-Driven 방식으로 설계되었으며, 크게 **4가지 Phase**로 나뉘어 실행된다. 
 
