@@ -66,7 +66,7 @@ python -m test_env
 
 <br><br>
 
-## Environment Overview
+## Environment Code Overview
 
 본 연구의 NPFSP 강화학습 시뮬레이터는 `Process` 클래스로 구현되어 있으며, 파이썬 기반으로 환경의 초기화, 상태/행동 공간(State/Action Space) 정의, 그리고 에피소드 진행을 관리한다.
 
