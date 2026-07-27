@@ -1,8 +1,45 @@
-# ENV for NPFSP + Missing opeartions + Limited buffers
+# DRL Environment code for the Non-Permutation Flowshop Scheduling Problem with Window Constrained Dynamic Operation Skipping and Limited Buffers
 
-DRL 에이전트 학습을 위한 **NPFSP(Non-Permutation Flowshop Scheduling Problem)**  시뮬레이터입니다. 본 환경은 검사 공정에서의 선택적 검사 공정 형태로 존재하는  **Missing Operations** 과 기계 간 **Limited Buffers** 라는 현실적인 제약 조건을 반영하여 설계되었습니다.
+DRL 에이전트 학습을 위한 **NPFSP(Non-Permutation Flowshop Scheduling Problem)**  시뮬레이터입니다. 본 환경은 검사 공정에서의 선택적 검사 공정 형태로 존재하는  **dynamic operation skipping** 와 **limited buffers** 라는 현실적인 제약 조건을 반영하여 설계되었습니다.
 
- 
+## 🚀 Getting Started
+
+해당 레포지토리는 Mac OS 및 Windows 환경 모두에서 호환되도록 구성되었습니다. 코드를 실행하여 환경 시뮬레이터를 테스트하려면 아래의 과정을 따라 주세요.
+
+### Prerequisites
+
+본 시뮬레이터는 다음 환경에서 정상적으로 동작함을 보장합니다.
+
+- **Python Version:** 3.11.9
+- 필수 패키지는 아래와 같습니다.
+
+```text
+# requirements.txt
+numpy==2.4.6
+torch==2.12.0
+```
+
+### Installation
+저장소를 클론한 뒤, 필수 의존성 패키지를 설치합니다
+```text
+# 1. 레포지토리 클론
+git clone https://github.com/sanghunii/npfsp-missing-ops-env.git
+
+# 2. 필수 패키지 설치
+pip install -r requirements.txt
+```
+
+### Quick Start (Running Demo Test)
+모든 설치가 완료되었다면, 아래의 테스트 코드를 통해 시뮬레이터를 실행시켜 볼 수 있습니다.
+```
+python -m test_env
+```
+
+## Results
+실행시 결과는 아래와 같습니다.
+
+
+<br><br> 
 
 ## Schematic
 
@@ -24,7 +61,7 @@ DRL 에이전트 학습을 위한 **NPFSP(Non-Permutation Flowshop Scheduling Pr
 - **비선점형(Non-preemptive) 작업:** 모든 작업은 한 번 기계 또는 검사 기계에서 처리가 시작되면 완료될 때까지 중단되거나 분할될 수 없다.
 - **Sequence-independent 셋업:** 기계의 셋업 시간 및 작업의 이동 시간은 가공 시간 $p_{ij}$ 및 검사 시간 $I_{ik}$에 이미 포함된 것으로 간주하며, 이는 작업 순서에 영향을 받지 않는다.
 - **제한된 버퍼 및 Blocking:** 첫 번째 기계를 제외한 모든 후속 기계 $j \in \{2,3,\dots,m\}$ 및 검사 기계 $k \in \mathcal{I}$ 앞에는 용량이 $C$로 제한된 대기 버퍼가 존재한다. 후속 기계의 버퍼가 가득 찬 경우, 선행 기계는 작업을 마쳤음에도 다음 단계로 배출하지 못하고 **Blocking** 상태가 된다.
-- **Window 제약 기반 Missing Operation:** 본 스케줄링 환경에서의 결측 공정(Missing operation)은 Inspection Machine에 한하여 발생한다. 검사 공정은 Window 제약 $W$를 위반하지 않는 선에서 제한적으로 생략(Bypass)될 수 있으며, 검사가 생략된 작업은 선행 기계에서 완료된 즉시 다음 기계의 버퍼로 직접 라우팅된다.
+- **Window Constrained Dynamic Operation Skipping:** 본 스케줄링 환경에서의 operation skipping은 inspection machine에 한하여 발생한다. 검사 공정은 window 제약 $W$를 위반하지 않는 선에서 제한적으로 생략(skipping)될 수 있으며, 검사가 생략된 작업은 선행 기계에서 완료된 즉시 다음 기계의 버퍼로 직접 라우팅된다.
 - **동시 완료 시 라우팅 우선순위:** 특정 Stage에서 일반 기계(Main machine)와 검사 기계(Inspection machine)의 작업이 동시에 완료된 경우, 검사 기계에서 완료된 작업이 다음 기계로 넘어가는 라우팅 우선순위(Routing priority)를 갖는다.
 
 <br><br>
@@ -96,39 +133,3 @@ Agent로부터 전달받은 Action을 해석하여 각 Machine의 Buffer를 정�
 #### Phase 4. State Generation
 `transition_point`가 활성화되어 루프를 빠져나오면, 업데이트된 환경을 바탕으로 State Value들을 계산한다.
 - 각 Machine의 Buffer 상태, 누적 Idle/Blocked 시간, Job의 잔여 시간 등을 종합하여 **State Vector**를 생성하고 Agent에게 반환(`return`)한다.
-
-<br><br>
-
-## 🚀 Getting Started
-
-해당 레포지토리는 Mac OS 및 Windows 환경 모두에서 호환되도록 구성되었습니다. 코드를 실행하여 환경 시뮬레이터를 테스트하려면 아래의 과정을 따라 주세요.
-
-### Prerequisites
-
-본 시뮬레이터는 다음 환경에서 정상적으로 동작함을 보장합니다.
-
-- **Python Version:** 3.11.9
-- 필수 패키지는 아래와 같습니다.
-
-```text
-# requirements.txt
-numpy==2.4.6
-torch==2.12.0
-```
-
-### Installation
-저장소를 클론한 뒤, 필수 의존성 패키지를 설치합니다
-```text
-# 1. 레포지토리 클론
-git clone https://github.com/sanghunii/npfsp-missing-ops-env.git
-
-# 2. 필수 패키지 설치
-pip install -r requirements.txt
-```
-
-### Quick Start (Running Demo Test)
-모든 설치가 완료되었다면, 아래의 테스트 코드를 통해 시뮬레이터를 실행시켜 볼 수 있습니다.
-```
-python -m test_env
-```
-
