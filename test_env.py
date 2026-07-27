@@ -6,7 +6,7 @@ def main():
     temp_episode_len_list = [100]
 
     # ENV PARAMETERS
-    MC_NUM = 3
+    MC_NUM = 6
     PROCESS_RANGE = [(20, 90)] * MC_NUM
     BUFFER_LIMIT = 3
     

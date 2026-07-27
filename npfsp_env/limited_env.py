@@ -188,6 +188,8 @@ class Process():    # ENV class
         
         self.state = self._get_state()
 
+        self._init_gantt_log()
+
         # 12. return current process state
         return (self.state, self.done, self.inspection_restricts.copy(), self.available_machines.copy())
     
@@ -207,6 +209,8 @@ class Process():    # ENV class
         
         # valid machine 초기화 (스케줄링은 마지막 기계 제외)
         self.available_machines = [False] * (self.num_machines - 1)
+
+        self._log_action_timing(action_list=action_list)
         
         # 1 & 2. Action 할당 및 Buffer 정렬 (Apply Dispatching Rule) 
         for m in range(self.num_machines - 1):  # 마지막 machine은 제외한다.
@@ -330,6 +334,8 @@ class Process():    # ENV class
                     if self.machines[m] and self.machines[m][1] == 0:
                         blocked_times_list[m] += process_time
             
+            self._log_gantt_step(time_increment=process_time)
+
             # 4-c. Remain Time 갱신
             for m in range(self.num_machines):
                 if self.machines[m] and self.machines[m][1] != 0:
@@ -565,11 +571,77 @@ class Process():    # ENV class
 
     def _get_state(self) -> Tuple[float, ...]:
         """
-        연구실 내부 사정상 state로직 가림. 
+        연구실 내부 사정상 state로직 비공개. 
         """
         states = self.state
 
         return tuple(states)
+
+
+    # Private helper method for Gantt Chart
+    def _init_gantt_log(self):
+        """
+        [Gantt Chart]
+        - Episode 시작 시 타임라인 로그 초기화
+        """
+        self.gantt_timeline = []    # 각 step별 process 상태 스냅샷 저장
+        self.gantt_history = []     # Agent가 각 시점별 내린 action과 해당 시점 기록
+    
+    
+    def _log_action_timing(self, action_list: List[int]):
+        """
+        [Gantt Chart]
+        - Agent의 의사결정 순간을 기록 (step 시작 시 1회 호출)
+        """
+        if not hasattr(self, 'gantt_history'):
+            self._init_gantt_log()
+        
+        self.gantt_history.append({
+            "time": self.makespan,                          # 언제?
+            "actions": action_list.copy(),                  # 어떤 action을 ?
+            "restricts": self.inspection_restricts.copy()   # 이때 inspection 강제 여부는?
+        })
+
+    def _log_gantt_step(self, time_increment: int):
+        """
+        [Gantt Chart]
+        - 시간이 흐를 때 기계들의 상태 snapshot기록
+        """
+
+        snapshot = {
+            "time_start": self.makespan - time_increment,
+            "time_end": self.makespan,
+            "machines": [],
+            "insps": []
+        }
+
+        for m in range(self.num_machines):
+            if self.machines[m]:
+                is_blocked = (self.machines[m][1] == 0) and (not self.done) and (m < self.num_machines - 1)
+                snapshot["machines"].append({
+                    "job_num": self.machines[m][0],
+                    "status": "Blocked" if is_blocked else "Processing"
+                })
+            else:
+                snapshot["machines"].append({
+                    "job_num": -1,
+                    "status": "Idle"
+                })
+            
+            if m < self.num_machines - 1:
+                if self.insps[m]:
+                    is_insp_blocked = (self.insps[m][1] == 0) and (not self.done)
+                    snapshot["insps"].append({
+                        "job_num": self.insps[m][0],
+                        "status": "Blocked" if is_insp_blocked else "Inspection"
+                    })
+                else:
+                    snapshot["insps"].append({
+                        "job_num": -1,
+                        "status": "Idle"
+                    })
+        
+        self.gantt_timeline.append(snapshot)
 
 
 
