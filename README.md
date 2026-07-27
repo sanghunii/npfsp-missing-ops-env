@@ -90,6 +90,8 @@ Agent로부터 전달받은 Action을 해석하여 각 Machine의 Buffer를 정�
 - **Action Masking (`-1`):** 현재 단계에서 작업 할당이 필요 없는(작업 중이거나 Blocked 상태인) Machine은 `-1`을 action으로 받는다. 즉, 직전 단계에서 `available_machines[m] == True`였던 Machine들만 유효한 action을 수행한다.
   > *이때 `available_machines[m] == False`인 machine이 `-1` action을 받지 않아도 상관없으며, 이후 이어질 로직에서 해당 machine에 대한 실질적인 job 투입은 일어나지 않는다.*
 
+<br>
+
 #### Phase 2. Job Allocation (Reverse Order)
 정렬된 Buffer를 바탕으로 Machine에 Job을 투입한다. 병목 현상(Blocking)을 정확히 모사하기 위해 **마지막 Machine부터 역순(Backward)**으로 할당을 진행한다.
 
@@ -98,6 +100,8 @@ Agent로부터 전달받은 Action을 해석하여 각 Machine의 Buffer를 정�
    - **Priority 1:** 직전 Inspection Machine에 대기 중인 Job (`remain_time == 0`)
    - **Priority 2:** $m-1$번째 Main Machine에 대기 중인 Job (`remain_time == 0`)
    - 위 조건에 해당하면 Job을 $m$번째 Buffer로 이동시킨 후, $m-1$번째 Machine에 새로운 Job 투입을 진행한다.
+
+<br>
 
 #### Phase 3. Time Progression & Event Evaluation
 다음 의사결정 시점(`transition_point == True`)이 도달할 때까지 가상 시간을 흐르게 하며 Job을 물리적으로 이동시킨다. 
@@ -129,6 +133,8 @@ Agent로부터 전달받은 Action을 해석하여 각 Machine의 Buffer를 정�
 ##### 3-3. Transition Flag Update (`available_machines`)
 - **Wake-up Check (`trigger_wakeup`):** $m+1$ Machine에 Job이 투입되어 상태가 변했을 때, 이전 Machine들의 Blocking 상태가 해제될 수 있는지 미래 상태(`b_m2_will_open` 등)를 확인하여 `available_machines` 플래그를 `True`로 갱신한다.
 - **Current Machine Check:** $m$ Machine이 비어있고 Buffer에 대기 Job이 있거나, Blocked 상태지만 다음 루프에서 자리가 날 예정(연쇄 해제)이라면 `available_machines[m] = True`로 설정한다.
+
+<br>
 
 #### Phase 4. State Generation
 `transition_point`가 활성화되어 루프를 빠져나오면, 업데이트된 환경을 바탕으로 State Value들을 계산한다.
