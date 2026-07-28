@@ -2,6 +2,16 @@
 
 DRL 에이전트 학습을 위한 **NPFSP(Non-Permutation Flowshop Scheduling Problem)**  시뮬레이터입니다. 본 환경은 검사 공정에서의 선택적 검사 공정 형태로 존재하는  **dynamic operation skipping** 와 **limited buffers** 라는 현실적인 제약 조건을 반영하여 설계되었습니다.
 
+<br>
+
+## Schematic
+
+본 연구에서 제안하는 NPFSP 환경의 전반적인 작업 흐름과 버퍼 구조는 다음과 같다.
+
+![NPFSP Environment Schematic](./assets/NPFSP_schematic.png)
+
+<br>
+
 ## 🚀 Getting Started
 
 해당 레포지토리는 Mac OS 및 Windows 환경 모두에서 호환되도록 구성되었습니다. 코드를 실행하여 환경 시뮬레이터를 테스트하려면 아래의 과정을 따라 주세요.
@@ -19,6 +29,8 @@ numpy==2.4.6
 torch==2.12.0
 ```
 
+<br>
+
 ### Installation
 저장소를 클론한 뒤, 필수 의존성 패키지를 설치합니다
 ```text
@@ -29,46 +41,68 @@ git clone https://github.com/sanghunii/npfsp-missing-ops-env.git
 pip install -r requirements.txt
 ```
 
+<br>
+
 ### Quick Start (Running Demo Test)
-모든 설치가 완료되었다면, 아래의 테스트 코드를 통해 시뮬레이터를 실행시켜 볼 수 있습니다.
+모든 설치가 완료되었다면, 아래의 테스트 코드를 통해 시뮬레이터를 실행시켜 볼 수 있습니다. <br>
+- **공정 환경**: 두 데모 테스트 코드의 환경 셋팅은 6 Machines, 5 Inspection Machines로 동일하게 설정되어 있습니다.
+- **동작 방식**: 두 데모 테스트 코드는 모든 머신에 대해 항상 FIFO(First-In, First-Out) 액션만 선택하도록 작성되었습니다.
+
+<br> 
+
+1. 대규모 인스턴스 테스트 및 결과 요약 (100 Jobs) <br>
+100개의 Job으로 구성된 100개의 인스턴스를 연속으로 테스트하고 평균 성능을 확인하려면 아래 명령어를 실행하세요. 
+
 ```
 python -m test_env
 ```
 
+<br>
+
+2. 단일 인스턴스 시뮬레이션 및 간트 차트 시각화 (15 Jobs) <br>
+15개의 Job으로 구성된 단일 인스턴스(1개)의 스케줄링 과정을 시뮬레이션하고 간트 차트로 시각화하려면 아래 명령어를 실행하세요.
+
+```
+python -m test_env_gantt
+```
+
+<br>
+
 ## Results
-실행시 결과는 아래와 같습니다.
+명령어 실행 시 다음과 같은 결과를 확인할 수 있습니다.
+
+<br>
+
+#### 1. `python -m test_env`
+
+터미널을 통해 100개의 인스턴스(Instance)에 대한 테스트 진행 상황이 출력됩니다.
+
+테스트가 모두 종료되면 평균 Makespan, 누적 Idle Time, Blocked Time 등의 최종 스케줄링 통계 및 요약 결과를 터미널에서 확인할 수 있습니다. <br>
+
+![NPFSP Environment Schematic](./assets/results_m6_n100.png)
+
+<br>
 
 
-<br><br> 
+#### 2. `python -m test_env_gantt`
 
-## Schematic
+단일 인스턴스(15 Jobs)에 대한 테스트가 진행됩니다.
 
-본 연구에서 제안하는 NPFSP 환경의 전반적인 작업 흐름과 버퍼 구조는 다음과 같다.
+실행 직후, 전체 공정 흐름과 의사결정 결과를 직관적으로 파악할 수 있는 간트 차트(Gantt Chart) 이미지 창이 팝업으로 나타납니다. <br>
 
-![NPFSP Environment Schematic](./assets/NPFSP_schematic.png)
+![NPFSP Environment Schematic](./assets/gantt_m6_n15.png)
+
+
+
 
 <br><br>
 
-## Assumptions
-
-본 연구에서 다루는 Scheduling Environment는 **NPFSP(Non-Permutation Flowshop Scheduling Problem)** 의 일반적인 가정¹²과 더불어, Limited Buffers 및 Window-based Inspection 제약에 따른 몇 가지 추가적인 가정을 전제로 한다.
-
-> ¹ *Multi-heuristic desirability ant colony system heuristic for non-permutation flowshop scheduling problems (The International Journal of Advanced Manufacturing Technology, 2007)*
-> ² *Solving non-permutation flow-shop scheduling problem via a novel deep reinforcement learning approach (Computers & Operations Research, 2023)*
-
-- **무한한 초기 버퍼:** 모든 작업은 시작 시간(Start time)에 첫 번째 기계의 버퍼에서 작업 가능한 상태로 대기한다. 이때 첫 번째 기계의 대기 버퍼는 무한한 용량을 갖는다고 가정한다.
-- **단일 처리 원칙:** 각 기계와 검사 기계는 한 번에 단 하나의 작업만 처리할 수 있으며, 각 작업 또한 한 번에 하나의 기계에서만 처리될 수 있다.
-- **비선점형(Non-preemptive) 작업:** 모든 작업은 한 번 기계 또는 검사 기계에서 처리가 시작되면 완료될 때까지 중단되거나 분할될 수 없다.
-- **Sequence-independent 셋업:** 기계의 셋업 시간 및 작업의 이동 시간은 가공 시간 $p_{ij}$ 및 검사 시간 $I_{ik}$에 이미 포함된 것으로 간주하며, 이는 작업 순서에 영향을 받지 않는다.
-- **제한된 버퍼 및 Blocking:** 첫 번째 기계를 제외한 모든 후속 기계 $j \in \{2,3,\dots,m\}$ 및 검사 기계 $k \in \mathcal{I}$ 앞에는 용량이 $C$로 제한된 대기 버퍼가 존재한다. 후속 기계의 버퍼가 가득 찬 경우, 선행 기계는 작업을 마쳤음에도 다음 단계로 배출하지 못하고 **Blocking** 상태가 된다.
-- **Window Constrained Dynamic Operation Skipping:** 본 스케줄링 환경에서의 operation skipping은 inspection machine에 한하여 발생한다. 검사 공정은 window 제약 $W$를 위반하지 않는 선에서 제한적으로 생략(skipping)될 수 있으며, 검사가 생략된 작업은 선행 기계에서 완료된 즉시 다음 기계의 버퍼로 직접 라우팅된다.
-- **동시 완료 시 라우팅 우선순위:** 특정 Stage에서 일반 기계(Main machine)와 검사 기계(Inspection machine)의 작업이 동시에 완료된 경우, 검사 기계에서 완료된 작업이 다음 기계로 넘어가는 라우팅 우선순위(Routing priority)를 갖는다.
-
-<br><br>
 
 ## Environment Code Overview
 
 본 연구의 NPFSP 강화학습 시뮬레이터는 `Process` 클래스로 구현되어 있으며, 파이썬 기반으로 환경의 초기화, 상태/행동 공간(State/Action Space) 정의, 그리고 에피소드 진행을 관리한다.
+
+<br>
 
 ### ⚙️ Initialization Arguments
 환경(Environment) 객체 생성 시 다음과 같은 주요 파라미터를 입력받아 동적으로 스케줄링 환경을 구성한다.
