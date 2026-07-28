@@ -71,8 +71,6 @@ python -m test_env_gantt
 ## Results
 명령어 실행 시 다음과 같은 결과를 확인할 수 있습니다.
 
-<br>
-
 #### 1. `python -m test_env`
 
 터미널을 통해 100개의 인스턴스(Instance)에 대한 테스트 진행 상황이 출력됩니다.
