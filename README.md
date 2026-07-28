@@ -1,4 +1,4 @@
-# DRL Environment code for the Non-Permutation Flowshop Scheduling Problem with Window Constrained Dynamic Operation Skipping and Limited Buffers
+# DRL Environment code for the Non-Permutation Flowshop Scheduling Problem with Window Constrained Dynamic Operation Skipping and Limited Buffers (Demo)
 
 DRL 에이전트 학습을 위한 **NPFSP(Non-Permutation Flowshop Scheduling Problem)**  시뮬레이터입니다. 본 환경은 검사 공정에서의 선택적 검사 공정 형태로 존재하는  **dynamic operation skipping** 와 **limited buffers** 라는 현실적인 제약 조건을 반영하여 설계되었습니다.
 
